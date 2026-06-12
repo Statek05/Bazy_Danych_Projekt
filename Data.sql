@@ -50,3 +50,63 @@ VALUES
     ('Oliver', 'Muller', 'olimuller', 'oliver.muller@web.de', '+4915123456789'),
     ('Elena', 'Popova', 'epopova', 'elena.popova@yandex.ru', '+79161234567');
 GO
+
+
+
+USE StockExchange;
+GO
+
+CREATE TABLE Wallets_Audit (
+    audit_id INT IDENTITY PRIMARY KEY,
+    wallet_id INT NOT NULL,
+    old_balance DECIMAL(18,8) NOT NULL,
+    new_balance DECIMAL(18,8) NOT NULL,
+    changed_at DATETIME DEFAULT GETDATE() NOT NULL
+);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM Transaction_statuses)
+BEGIN
+    INSERT INTO Transaction_statuses (name)
+    VALUES ('PENDING'), ('COMPLETED'), ('CANCELLED'), ('FAILED');
+END
+GO;
+
+
+
+BEGIN TRY
+    BEGIN TRAN;
+
+    DELETE FROM Assets
+    WHERE symbol IN ('WTI', 'BRENT');
+    COMMIT TRAN;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRAN;
+
+    PRINT 'Error';
+    PRINT ERROR_MESSAGE();
+
+END CATCH;
+
+
+BEGIN TRY
+    BEGIN TRAN;
+
+    DELETE FROM Assets
+    WHERE symbol IN ('MATIC');
+
+    COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRAN;
+
+    PRINT 'Error';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+
+
+GO
