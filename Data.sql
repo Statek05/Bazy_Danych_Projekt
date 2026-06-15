@@ -134,4 +134,3 @@ begin
     where user_name = @user_name;
 end;
 go
-
