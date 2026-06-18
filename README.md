@@ -43,7 +43,7 @@ Warstwa abstrakcji służąca do bezpiecznego, zoptymalizowanego odczytu danych 
 
 ### Kod
 
-````
+```
 create table Assets_types
 (
     type_id int identity
