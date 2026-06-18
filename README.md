@@ -6,7 +6,7 @@ Platforma symulująca giełdę akcji i kryptowalut. Projekt wdraża solidną war
 
 ## Schemat Bazy Danych
 
-![img_3.png](img_3.png)
+![img.png](img.png)
 
 ---
 
