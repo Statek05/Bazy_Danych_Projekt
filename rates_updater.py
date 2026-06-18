@@ -17,7 +17,6 @@ CONN_STR = (
 
 def fetch_all_prices():
     prices = {}
-
     mapping = {
         'BTC-USD': 'BTC', 'ETH-USD': 'ETH', 'SOL-USD': 'SOL', 'ADA-USD': 'ADA',
         'XRP-USD': 'XRP', 'DOT-USD': 'DOT', 'DOGE-USD': 'DOGE',
@@ -44,7 +43,6 @@ def fetch_all_prices():
 
     return prices
 
-
 def update_database(prices):
     if not prices:
         return
@@ -53,7 +51,6 @@ def update_database(prices):
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
 
-        # Pobieramy dokładny czas z Twojego komputera (Windowsa) w formacie SQL
         local_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         insert_query = """
@@ -62,19 +59,16 @@ def update_database(prices):
 
         IF @asset_id IS NOT NULL
         BEGIN
-            -- 1. Zamykamy stary kurs Twoim lokalnym czasem z Pythona
             UPDATE Exchange_rates
             SET valid_until = ?
             WHERE asset_id = @asset_id AND valid_until IS NULL;
 
-            -- 2. Tworzymy nowy kurs, wymuszając polski czas w kolumnie valid_since
             INSERT INTO Exchange_rates (asset_id, rate_to_usd, valid_since)
             VALUES (@asset_id, ?, ?);
         END
         """
 
         for symbol, price in prices.items():
-            # Podajemy parametry w kolejności: symbol, czas (do UPDATE), cena (do INSERT), czas (do INSERT)
             cursor.execute(insert_query, symbol, local_time, price, local_time)
 
         conn.commit()
@@ -97,4 +91,4 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"[{datetime.now().strftime('%H:%M:%S')}] Unexpected error: {e}")
 
-        time.sleep(60)
+        time.sleep(300)

@@ -33,3 +33,13 @@ where t.status = 1
 group by af.symbol, at.symbol;
 go
 
+create view v_current_rates as
+select
+    a.symbol as asset_symbol,
+    a.name as asset_name,
+    er.rate_to_usd,
+    er.valid_since
+from Exchange_rates er
+join Assets a on er.asset_id = a.asset_id
+where er.valid_until is null;
+go
