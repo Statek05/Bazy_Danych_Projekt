@@ -734,7 +734,7 @@ go
 Usługa napisana w języku Python z wykorzystaniem frameworka **FastAPI** oraz biblioteki **PyODBC**.
 * Stanowi asynchroniczny, lekki most komunikacyjny pomiędzy bazą danych a klientem.
 * Obsługuje proste uwierzytelnianie (nagłówek `X-User-Name`).
-* Przechwytuje surowe błędy natywne sterownika SQL Server (tzw. "brudne" wyjątki) i precyzyjnie wycina z nich wygenerowane przez procedury komunikaty tekstowe, dostarczając frontendowi czyste odpowiedzi w formacie JSON.
+* Przechwytuje surowe błędy natywne sterownika SQL Server i precyzyjnie wycina z nich wygenerowane przez procedury komunikaty tekstowe, dostarczając frontendowi czyste odpowiedzi w formacie JSON.
 
 ### Updater (Aktualizator Danych Rynkowych)
 Niezależny mikrosekrypt (`rates_updater.py`) działający w pętli czasowej w tle.
