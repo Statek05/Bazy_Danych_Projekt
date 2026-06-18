@@ -1,4 +1,4 @@
-# StockExchange
+# StockExchange (Antoni Statek, Patryk Ledziński)
 
 Platforma symulująca giełdę akcji i kryptowalut. Projekt wdraża solidną warstwę relacyjnej bazy danych wykorzystującą zaawansowane funkcje T-SQL w celu zapewnienia integralności transakcyjnej (ACID), połączoną z nowoczesnym backendem FastAPI, zautomatyzowanym agregatorem danych rynkowych w czasie rzeczywistym oraz interfejsem webowym..
 
@@ -43,6 +43,7 @@ Warstwa abstrakcji służąca do bezpiecznego, zoptymalizowanego odczytu danych 
 
 ### Kod
 
+````
 create table Assets_types
 (
     type_id int identity
@@ -724,7 +725,7 @@ begin
     end catch;
 end;
 go
-
+```
 ---
 
 ## Moduły Aplikacji
