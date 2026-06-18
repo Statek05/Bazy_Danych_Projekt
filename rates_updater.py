@@ -29,7 +29,7 @@ def fetch_all_prices():
 
     try:
         tickers_list = list(mapping.keys())
-        data = yf.download(tickers_list, period="1d", interval="1m", progress=False)
+        data = yf.download(tickers_list, period="1d", interval="3m", progress=False)
 
         for yf_ticker, db_symbol in mapping.items():
             try:
