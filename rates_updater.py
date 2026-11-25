@@ -1,3 +1,4 @@
+import os
 import time
 import pyodbc
 import yfinance as yf
@@ -8,10 +9,10 @@ warnings.filterwarnings('ignore')
 
 CONN_STR = (
     "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=localhost,1433;"
-    "DATABASE=StockExchange;"
-    "UID=sa;"
-    "PWD=Prodzekt123;"
+    f"SERVER={os.getenv('DB_SERVER', 'localhost,1433')};"
+    f"DATABASE={os.getenv('DB_NAME', 'StockExchange')};"
+    f"UID={os.getenv('DB_USER', 'sa')};"
+    f"PWD={os.environ['DB_PASSWORD']};"
     "TrustServerCertificate=yes;"
 )
 
@@ -29,7 +30,7 @@ def fetch_all_prices():
 
     try:
         tickers_list = list(mapping.keys())
-        data = yf.download(tickers_list, period="1d", interval="3m", progress=False)
+        data = yf.download(tickers_list, period="1d", interval="5m", progress=False)
 
         for yf_ticker, db_symbol in mapping.items():
             try:

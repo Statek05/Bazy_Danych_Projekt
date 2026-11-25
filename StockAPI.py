@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Security
 from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import os
 import pyodbc
 from datetime import datetime
 
@@ -19,12 +20,12 @@ app.add_middleware(
 )
 
 CONNECTION_STRING = (
-    r'DRIVER={ODBC Driver 17 for SQL Server};'
-    r'SERVER=localhost,1433;'
-    r'DATABASE=StockExchange;'
-    r'UID=sa;'
-    r'PWD=Prodzekt123;'
-    r'TrustServerCertificate=yes;'
+    "DRIVER={ODBC Driver 17 for SQL Server};"
+    f"SERVER={os.getenv('DB_SERVER', 'localhost,1433')};"
+    f"DATABASE={os.getenv('DB_NAME', 'StockExchange')};"
+    f"UID={os.getenv('DB_USER', 'sa')};"
+    f"PWD={os.environ['DB_PASSWORD']};"
+    "TrustServerCertificate=yes;"
 )
 
 api_key_header = APIKeyHeader(name="X-User-Name", description="Enter your Username to login", auto_error=True)

@@ -1,5 +1,24 @@
 # StockExchange (Antoni Statek, Patryk Ledziński)
 
+> **EN summary:** A stock & crypto exchange simulator. The core of the project is a Microsoft SQL Server database where the trading logic lives in T-SQL: stored procedures create and settle orders (fees, slippage control, pending-order queue), triggers match pending orders automatically whenever new market rates arrive, and every wallet balance change is audited. A FastAPI service exposes the database as a REST API, a Python worker pulls live prices from Yahoo Finance every 5 minutes, and a vanilla JS single-page app serves as the UI.
+>
+> **Authors:** Antoni Statek – database design and all T-SQL logic, REST API (FastAPI), market data updater. Patryk Ledziński – frontend.
+
+## Quick start
+
+1. Start SQL Server (e.g. the `mcr.microsoft.com/mssql/server` Docker image on port 1433) and create a database named `StockExchange`.
+2. Run `DatabaseCode.sql` (schema, procedures, triggers, views), then load the seed data from `Data.sql`.
+3. Set the connection settings as environment variables (see `.env.example`), at minimum `DB_PASSWORD`.
+4. Install dependencies and run the services:
+   ```bash
+   pip install -r requirements.txt
+   uvicorn StockAPI:app --reload      # API on http://127.0.0.1:8000 (docs: /docs)
+   python rates_updater.py            # live price updates every 5 min
+   ```
+5. Open `frontend/index.html` in a browser and log in with a username from the seed data.
+
+---
+
 Platforma symulująca giełdę akcji i kryptowalut. Projekt wdraża solidną warstwę relacyjnej bazy danych wykorzystującą zaawansowane funkcje T-SQL w celu zapewnienia integralności transakcyjnej (ACID), połączoną z nowoczesnym backendem FastAPI, zautomatyzowanym agregatorem danych rynkowych w czasie rzeczywistym oraz interfejsem webowym..
 
 ---
@@ -743,6 +762,7 @@ from fastapi import FastAPI, HTTPException, Security
 from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import os
 import pyodbc
 from datetime import datetime
 
@@ -760,12 +780,12 @@ app.add_middleware(
 )
 
 CONNECTION_STRING = (
-    r'DRIVER={ODBC Driver 17 for SQL Server};'
-    r'SERVER=localhost,1433;'
-    r'DATABASE=StockExchange;'
-    r'UID=sa;'
-    r'PWD=Prodzekt123;'
-    r'TrustServerCertificate=yes;'
+    "DRIVER={ODBC Driver 17 for SQL Server};"
+    f"SERVER={os.getenv('DB_SERVER', 'localhost,1433')};"
+    f"DATABASE={os.getenv('DB_NAME', 'StockExchange')};"
+    f"UID={os.getenv('DB_USER', 'sa')};"
+    f"PWD={os.environ['DB_PASSWORD']};"
+    "TrustServerCertificate=yes;"
 )
 
 api_key_header = APIKeyHeader(name="X-User-Name", description="Enter your Username to login", auto_error=True)
@@ -973,6 +993,7 @@ Niezależny mikrosekrypt (`rates_updater.py`) działający w pętli czasowej w t
 
 #### Kod
 ```
+import os
 import time
 import pyodbc
 import yfinance as yf
@@ -983,10 +1004,10 @@ warnings.filterwarnings('ignore')
 
 CONN_STR = (
     "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=localhost,1433;"
-    "DATABASE=StockExchange;"
-    "UID=sa;"
-    "PWD=Prodzekt123;"
+    f"SERVER={os.getenv('DB_SERVER', 'localhost,1433')};"
+    f"DATABASE={os.getenv('DB_NAME', 'StockExchange')};"
+    f"UID={os.getenv('DB_USER', 'sa')};"
+    f"PWD={os.environ['DB_PASSWORD']};"
     "TrustServerCertificate=yes;"
 )
 
